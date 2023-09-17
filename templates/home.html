@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block h1 %}
+    Featured Pets
+{% endblock %}
+
+{% block content %}
+    <div class="contiainer">
+        <div class="row">
+            {% for pet in pets %}
+            <div class="col-6 col-lg-4">
+                <div class="card mb-3 border shadow">
+                    <img src="{{pet.photo_url}}" alt="" class="card-img-top" height="250px" id="profile_pic">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{pet.name}}   
+                        </h5>
+                        <p>
+                            {% if pet.available %}
+                            Status: <strong class="text-success">Available</strong>
+                            {% else %}
+                            Status: <strong class="text-warning">Recently Adopted</strong>
+                            {% endif %}
+                        </p>
+                    </div>    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
