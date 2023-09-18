@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy import text
 from models import db, connect_db, Pet
-from forms import AddPetForm 
+from forms import AddPetForm, EditPetForm 
 
 
 app = Flask(__name__)
@@ -21,14 +21,16 @@ db.create_all()
 @app.route('/')
 def show_home_page():
     """Show home page"""
-
-    pets = Pet.query.all()
+    # return list of pets listed in descending order by name
+    pets = db.session.execute(db.select(Pet).order_by(Pet.name)).scalars()
 
     return render_template('home.html', pets=pets)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_pet():
     form = AddPetForm()
+    available_species = db.session.query(Pet.species).all()
+    form.species.choices = [(item[0]) for item in available_species]
 
     if form.validate_on_submit():
         name = form.name.data
@@ -43,3 +45,24 @@ def add_pet():
         return redirect('/')
     else:
         return render_template('add_pet.html', form=form)
+    
+@app.route('/pets/<int:pid>')
+def pet_details(pid):
+    """Show selected pet details page"""
+
+    pet = db.session.get(Pet, pid)
+    return render_template('pet_details.html', pet=pet)
+
+@app.route('/pets/<int:pid>/edit', methods=['GET', 'POST'])
+def edit_pet(pid):
+    pet = Pet.query.get_or_404(pid)
+    form = EditPetForm(obj=pet)
+
+    if form.validate_on_submit():
+        pet.photo_url = form.photo_url.data
+        pet.notes = form.notes.data
+        pet.available = form.available.data
+        db.session.commit()
+        return redirect(f'/pets/{pid}')
+    else:
+        return render_template('edit_pet.html', form=form, pet=pet)

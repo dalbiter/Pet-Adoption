@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Pets R Us Add Pet
+    Pets R Us Edit Pet
 {% endblock %}
 
 {% block h1 %}
-    Add New Pet
+    Edit {{pet.name}}'s details
 {% endblock %}
 
 {% block content %}
@@ -25,8 +25,8 @@
                 {% endfor %}
             </div>
             {% endfor %}
-            <button class="btn btn-info">Add Pet</button>
-            <a href="/" class="btn btn-warning">Cancel</a>
+            <button class="btn btn-info">Edit Pet</button>
+            <a href="/pets/{{pet.id}}" class="btn btn-warning">Cancel</a>
         </form>
     </div>
 </div>
