@@ -29,8 +29,6 @@ def show_home_page():
 @app.route('/add', methods=['GET', 'POST'])
 def add_pet():
     form = AddPetForm()
-    available_species = db.session.query(Pet.species).all()
-    form.species.choices = [(item[0]) for item in available_species]
 
     if form.validate_on_submit():
         name = form.name.data
